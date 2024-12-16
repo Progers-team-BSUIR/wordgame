@@ -149,8 +149,9 @@ private:
     void playerTurn(int playerIndex)
     {
         wcout << L"Ход игрока " << (playerIndex + 1) << L": ";
-        wstring playerWord;
-        getline(wcin, playerWord);
+        wstring inputWord;
+        getline(wcin, inputWord);
+        wstring playerWord = trim(inputWord);
 
         // Если пропуск хода
         if (playerWord.empty())
