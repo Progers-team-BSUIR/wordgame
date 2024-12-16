@@ -207,17 +207,32 @@ private:
         wcout << L"Очки игроков:\n";
         int maxScore = -999999;
         int winner = -1;
+        bool tie = false;
+
         for (int i = 0; i < numPlayers; i++)
         {
-            wcout << L"Игрок" << (i + 1) << L":" << scores[i] << L" очков\n";
+            wcout << L"Игрок " << (i + 1) << L": " << scores[i] << L" очков\n";
+
             if (scores[i] > maxScore)
             {
                 maxScore = scores[i];
                 winner = i + 1;
+                tie = false; // Сбрасываем состояние ничьей
+            }
+            else if (scores[i] == maxScore)
+            {
+                tie = true; // Фиксируем ничью, если кто-то набрал столько же очков
             }
         }
 
-        wcout << L"Победил игрок " << winner << L"!\n";
+        if (tie)
+        {
+            wcout << L"Ничья! Несколько игроков набрали " << maxScore << L" очков.\n";
+        }
+        else
+        {
+            wcout << L"Победил игрок " << winner << L" с " << maxScore << L" очками!\n";
+        }
     }
 };
 
