@@ -248,5 +248,7 @@ int main()
     WordGame game(baseWord, numPlayers);
     game.start();
 
+    cin.get();
+
     return 0;
 }
