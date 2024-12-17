@@ -58,7 +58,7 @@ public:
         }
 
         // Проверка на существование слова (пока возвращает true)
-        if (!wordExists(playerWord))
+        if (!wordExists(playerWord) || (playerWord == mainWrd))
         {
             // Если слово не существует, штраф = -длина_слова
             return -(int)playerWord.size();
@@ -176,7 +176,7 @@ private:
             usedWords.push_back(playerWord);
             skipCount[playerIndex] = 0;
             consecutiveSkips = 0;
-            wcout << L"Слово принято! Очки: +" << score << L"\n";
+            wcout << L"Слово принято! Очки: +" << score << L" всего: " << scores[playerIndex] << L"\n\n";
         }
         else if (score < 0)
         {
@@ -184,7 +184,7 @@ private:
             scores[playerIndex] += score;
             skipCount[playerIndex] = 0;
             consecutiveSkips = 0;
-            wcout << L"Некорректное слово. Очки: " << score << L"\n";
+            wcout << L"Некорректное слово. Очки: " << score << L" всего: " << scores[playerIndex] << L"\n\n";
         }
         else
         {
@@ -199,39 +199,53 @@ private:
     void endGame()
     {
         wcout << L"Игра окончена!\n";
-        wcout << L"Использованные слова:\n";
-        for (const auto &word : usedWords)
+        wcout << L"Очки игроков:\n";
+
+        int maxScore = -999999;
+        int winner = 0;              // Номер победителя (индекс игрока)
+        bool allEqual = true;        // Флаг, что все очки одинаковы
+        bool tieBetweenSome = false; // Флаг для ничьей между несколькими игроками
+
+        // Проверяем очки
+        for (int i = 1; i < numPlayers; i++)
         {
-            wcout << word << L"\n";
+            if (scores[i] != scores[0])
+                allEqual = false; // Если хотя бы одно значение отличается, это не полная ничья
         }
 
-        wcout << L"Очки игроков:\n";
-        int maxScore = -999999;
-        int winner = -1;
-        bool tie = false;
+        // Если все очки равны
+        if (allEqual)
+        {
+            wcout << L"Ничья! Все игроки набрали по " << scores[0] << L" очков.\n";
+            return;
+        }
 
+        // Определяем максимальный счет и ищем ничью между несколькими игроками
+        int countMax = 0; // Счетчик количества игроков с максимальными очками
         for (int i = 0; i < numPlayers; i++)
         {
-            wcout << L"Игрок " << (i + 1) << L": " << scores[i] << L" очков\n";
-
             if (scores[i] > maxScore)
             {
                 maxScore = scores[i];
-                winner = i + 1;
-                tie = false; // Сбрасываем состояние ничьей
+                winner = i + 1; // Обновляем победителя
+                countMax = 1;   // Сбрасываем счетчик ничьей
+                tieBetweenSome = false;
             }
             else if (scores[i] == maxScore)
             {
-                tie = true; // Фиксируем ничью, если кто-то набрал столько же очков
+                countMax++;            // Увеличиваем счетчик игроков с максимальными очками
+                tieBetweenSome = true; // Фиксируем ничью между несколькими игроками
             }
         }
 
-        if (tie)
+        // Проверяем на ничью между несколькими игроками
+        if (countMax > 1)
         {
-            wcout << L"Ничья! Несколько игроков набрали " << maxScore << L" очков.\n";
+            wcout << L"Ничья между несколькими игроками с " << maxScore << L" очками.\n";
         }
         else
         {
+            // Победитель найден
             wcout << L"Победил игрок " << winner << L" с " << maxScore << L" очками!\n";
         }
     }
@@ -250,10 +264,12 @@ int main()
     {
         wcout << L"Введите количество игроков (от 2 до 4): ";
         wcin >> numPlayers;
-        if (numPlayers > 4 || numPlayers < 2)
+        if (numPlayers > 4 || numPlayers < 2 || numPlayers == -1)
         {
             wcout << L"Игроков должно быть от 2 до 4\n";
             numPlayers = -1;
+            wcin.clear();
+            wcin.ignore(10000, '\n');
         }
     }
 
