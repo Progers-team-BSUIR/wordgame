@@ -128,6 +128,11 @@ public:
         skipCount.resize(numPlayers, 0);
         scores.resize(numPlayers, 0);
     }
+    void displayStaticInfo()
+    {
+        wcout << L"Базовое слово: " << baseWord << L"\n";
+        wcout << L"Количество игроков: " << numPlayers << L"\n";
+    }
 
     // Запуск игры
     void start()
@@ -140,6 +145,20 @@ public:
                 playerTurn(i);
                 if (!gameActive)
                     break;
+            }
+
+            // Вывод результатов раунда после хода последнего игрока
+            if (gameActive)
+            {
+                system("cls"); // Полная очистка консоли
+                displayStaticInfo();
+                wcout << L"---------------------------------\n";
+                wcout << L"Результаты текущего раунда:\n";
+                for (int i = 0; i < numPlayers; ++i)
+                {
+                    wcout << L"Игрок " << (i + 1) << L": " << scores[i] << L" очков\n";
+                }
+                wcout << L"---------------------------------\n";
             }
         }
         endGame();
