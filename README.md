@@ -1,1 +1,5 @@
-Wordgame using C++
+# Wordgame using C++
+
+### Как запустить?
+
+Скачайте содержимое репозитория и запустите файл WordGame.exe
